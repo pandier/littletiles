@@ -279,16 +279,17 @@ public class Placement {
     }
     
     private void updateRelations(PlacementStructurePreview preview) {
-        for (int i = 0; i < preview.children.size(); i++) {
-            PlacementStructurePreview child = preview.children.get(i);
+        int structureIndex = 0;
+        for (PlacementStructurePreview child : preview.children) {
             if (preview.isStructure() && child.isStructure()) {
-                preview.getStructure().children.connectToChild(i, child.getStructure());
-                child.getStructure().children.connectToParentAsChild(i, preview.getStructure());
+                preview.getStructure().children.connectToChild(structureIndex, child.getStructure());
+                child.getStructure().children.connectToParentAsChild(structureIndex, preview.getStructure());
+                structureIndex++;
             }
-            
+
             updateRelations(child);
         }
-        
+
         for (Entry<String, PlacementStructurePreview> pair : preview.extensions.entrySet()) {
             if (preview.isStructure() && pair.getValue().isStructure()) {
                 preview.getStructure().children.connectToExtension(pair.getValue().extension, pair.getValue().getStructure());
@@ -609,7 +610,7 @@ public class Placement {
         public void place(StructureParentCollection parent) {
             if (cachedStructure == null) {
                 cachedStructure = parent.setStructureNBT(previews.getStructureTag());
-                cachedStructure.children.initAfterPlacing(children.size());
+                cachedStructure.children.initAfterPlacing((int) children.stream().filter(PlacementStructurePreview::isStructure).count());
             } else {
                 StructureParentCollection.setRelativePos(parent, cachedStructure.mainBlock.getPos().subtract(parent.getPos()));
                 cachedStructure.addBlock(parent);
