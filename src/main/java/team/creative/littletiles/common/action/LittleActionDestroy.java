@@ -103,7 +103,12 @@ public class LittleActionDestroy extends LittleActionInteract<Boolean> {
     protected boolean isRightClick() {
         return false;
     }
-    
+
+    @Override
+    protected boolean isModify() {
+        return true;
+    }
+
     @Override
     public LittleAction mirror(Axis axis, LittleBoxAbsolute box) {
         LittleBoxes boxes;

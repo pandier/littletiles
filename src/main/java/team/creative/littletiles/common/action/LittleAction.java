@@ -9,7 +9,6 @@ import org.apache.commons.lang3.mutable.MutableInt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,7 +30,6 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StainedGlassBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -124,7 +122,7 @@ public abstract class LittleAction<T> extends CreativePacket {
     
     public static boolean canPlace(Player player) {
         GameType type = PlayerUtils.getGameType(player);
-        if (type == GameType.CREATIVE || type == GameType.SURVIVAL || type == GameType.ADVENTURE)
+        if (type == GameType.CREATIVE || type == GameType.SURVIVAL)
             return true;
         return false;
     }
@@ -249,31 +247,17 @@ public abstract class LittleAction<T> extends CreativePacket {
         }
     }
     
-    public static boolean isAllowedToInteract(Player player, LittleEntity entity, boolean rightClick) {
-        if (player.isSpectator() || (!rightClick && (PlayerUtils.isAdventure(player) || !player.mayBuild())))
-            return false;
-        
-        return true;
+    public static boolean isAllowedToInteract(Player player, LittleEntity entity, boolean rightClick, boolean modify) {
+        return !(player.isSpectator() || (modify && (PlayerUtils.isAdventure(player) || !player.mayBuild())));
     }
     
-    public static boolean isAllowedToInteract(LevelAccessor level, Player player, BlockPos pos, boolean rightClick, Facing facing) {
+    public static boolean isAllowedToInteract(LevelAccessor level, Player player, BlockPos pos, boolean rightClick, boolean modify, Facing facing) {
         if (player == null || player.level().isClientSide)
             return true;
         
-        if (player.isSpectator() || (!rightClick && (PlayerUtils.isAdventure(player) || !player.mayBuild())))
+        if (player.isSpectator() || (modify && (PlayerUtils.isAdventure(player) || !player.mayBuild())))
             return false;
-        
-        if (player.isSpectator())
-            return false;
-        
-        if (!rightClick && PlayerUtils.isAdventure(player)) {
-            ItemStack stack = player.getMainHandItem();
-            BlockInWorld blockinworld = new BlockInWorld(level, pos, false);
-            if (!stack.hasAdventureModePlaceTagForBlock(level.registryAccess().registryOrThrow(Registries.BLOCK), blockinworld))
-                return false;
-        } else if (!rightClick && !player.mayBuild())
-            return false;
-        
+
         if (WorldEditEvent != null) {
             PlayerInteractEvent event = rightClick ? new PlayerInteractEvent.RightClickBlock(player, InteractionHand.MAIN_HAND, pos, new BlockHitResult(Vec3.atBottomCenterOf(
                 pos), facing.toVanilla(), pos, true)) : new PlayerInteractEvent.LeftClickBlock(player, pos, facing.toVanilla());

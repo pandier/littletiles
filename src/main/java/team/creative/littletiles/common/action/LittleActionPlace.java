@@ -72,7 +72,7 @@ public class LittleActionPlace extends LittleAction<Boolean> {
     public Boolean action(Player player) throws LittleActionException {
         Level level = player.level();
         
-        if (!isAllowedToInteract(level, player, preview.position.getPos(), true, preview.position.facing)) {
+        if (!isAllowedToInteract(level, player, preview.position.getPos(), true, true, preview.position.facing)) {
             sendBlockResetToClient(level, player, preview);
             return false;
         }

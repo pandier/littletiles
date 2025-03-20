@@ -24,6 +24,7 @@ import team.creative.creativecore.common.util.inventory.ContainerSlotView;
 import team.creative.creativecore.common.util.math.base.Axis;
 import team.creative.creativecore.common.util.math.transformation.Rotation;
 import team.creative.creativecore.common.util.mc.ColorUtils;
+import team.creative.creativecore.common.util.mc.PlayerUtils;
 import team.creative.creativecore.common.util.mc.TooltipUtils;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.api.common.tool.ILittleEditor;
@@ -129,6 +130,8 @@ public class ItemLittlePaintBrush extends Item implements ILittleEditor, IItemTo
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean onClickBlock(Level level, Player player, ItemStack stack, PlacementPosition position, BlockHitResult result) {
+        if (PlayerUtils.isAdventure(player))
+            return false;
         if (LittleActionHandlerClient.isUsingSecondMode()) {
             selection = null;
             LittleTilesClient.PREVIEW_RENDERER.removeMarked();

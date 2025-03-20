@@ -24,6 +24,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import team.creative.creativecore.common.util.inventory.ContainerSlotView;
 import team.creative.creativecore.common.util.math.base.Facing;
+import team.creative.creativecore.common.util.mc.PlayerUtils;
 import team.creative.littletiles.LittleTilesGuiRegistry;
 import team.creative.littletiles.api.common.ingredient.ILittleIngredientInventory;
 import team.creative.littletiles.api.common.tool.ILittlePlacer;
@@ -130,6 +131,8 @@ public class LittleToolHandler {
             return false;
         PlacementPosition position = LittleTilesClient.PREVIEW_RENDERER.getPosition(player, level, stack, (BlockHitResult) result);
         if (iTile.onRightClick(level, player, stack, position.copy(), (BlockHitResult) result) && iTile instanceof ILittlePlacer placer && placer.hasTiles(stack)) {
+            if (PlayerUtils.isAdventure(player))
+                return false;
             if (LittleTilesClient.INTERACTION.start(true)) {
                 PlacementPreview preview = placer.getPlacement(player, level, stack, position, false);
                 if (preview == null)

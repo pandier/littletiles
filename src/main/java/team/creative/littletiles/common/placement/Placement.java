@@ -141,7 +141,7 @@ public class Placement {
         affectedBlocks.setValue(0);
         
         for (BlockPos pos : blocks.keySet()) {
-            if (!LittleAction.isAllowedToInteract(level, player, pos, true, Facing.EAST)) {
+            if (!LittleAction.isAllowedToInteract(level, player, pos, true, true, Facing.EAST)) {
                 LittleAction.sendBlockResetToClient(level, player, pos);
                 return false;
             }

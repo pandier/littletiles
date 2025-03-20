@@ -24,6 +24,7 @@ import team.creative.creativecore.common.util.filter.BiFilter;
 import team.creative.creativecore.common.util.inventory.ContainerSlotView;
 import team.creative.creativecore.common.util.math.base.Axis;
 import team.creative.creativecore.common.util.math.transformation.Rotation;
+import team.creative.creativecore.common.util.mc.PlayerUtils;
 import team.creative.littletiles.api.common.tool.ILittleEditor;
 import team.creative.littletiles.client.LittleTilesClient;
 import team.creative.littletiles.client.action.LittleActionHandlerClient;
@@ -94,6 +95,8 @@ public class ItemLittleHammer extends Item implements ILittleEditor, IItemToolti
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean onClickBlock(Level level, Player player, ItemStack stack, PlacementPosition position, BlockHitResult result) {
+        if (PlayerUtils.isAdventure(player))
+            return false;
         if (LittleActionHandlerClient.isUsingSecondMode()) {
             selection = null;
             LittleTilesClient.PREVIEW_RENDERER.removeMarked();
@@ -105,6 +108,7 @@ public class ItemLittleHammer extends Item implements ILittleEditor, IItemToolti
                     LittleTilesClient.ACTION_HANDLER.execute(new LittleActionDestroyBoxes(level, selection.getBoxes(false, getPositionGrid(player, stack))));
                 selection = null;
                 LittleTilesClient.PREVIEW_RENDERER.removeMarked();
+                return true;
             }
         return false;
     }

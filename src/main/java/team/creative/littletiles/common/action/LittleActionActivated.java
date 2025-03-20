@@ -50,7 +50,12 @@ public class LittleActionActivated extends LittleActionInteract<InteractionResul
     protected boolean isRightClick() {
         return true;
     }
-    
+
+    @Override
+    protected boolean isModify() {
+        return false;
+    }
+
     @Override
     public LittleAction mirror(Axis axis, LittleBoxAbsolute box) {
         return null;

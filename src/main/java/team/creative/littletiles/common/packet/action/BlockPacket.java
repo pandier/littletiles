@@ -178,7 +178,7 @@ public class BlockPacket extends CreativePacket {
             if (entity == null)
                 return;
             
-            if (!LittleAction.isAllowedToInteract(player, entity, action.rightClick))
+            if (!LittleAction.isAllowedToInteract(player, entity, action.rightClick, true))
                 return;
             
             level = entity.getSubLevel();
@@ -190,7 +190,7 @@ public class BlockPacket extends CreativePacket {
         if (blockEntity instanceof BETiles be) {
             LittleTileContext context = be.getFocusedTile(pos, look);
             
-            if (!LittleAction.isAllowedToInteract(level, player, blockPos, action.rightClick, Facing.EAST)) {
+            if (!LittleAction.isAllowedToInteract(level, player, blockPos, action.rightClick, true, Facing.EAST)) {
                 LittleAction.sendBlockResetToClient(level, player, be);
                 return;
             }

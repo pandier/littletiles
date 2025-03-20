@@ -72,6 +72,8 @@ public abstract class LittleActionInteract<T> extends LittleAction<T> {
     protected abstract boolean requiresBreakEvent();
     
     protected abstract boolean isRightClick();
+
+    protected abstract boolean isModify();
     
     protected abstract T action(Level level, BETiles te, LittleTileContext context, ItemStack stack, Player player, BlockHitResult hit, BlockPos pos, boolean secondMode, InteractionHand hand) throws LittleActionException;
     
@@ -92,7 +94,7 @@ public abstract class LittleActionInteract<T> extends LittleAction<T> {
             if (animation == null)
                 onEntityNotFound();
             
-            if (!isAllowedToInteract(player, animation, isRightClick()))
+            if (!isAllowedToInteract(player, animation, isRightClick(), isModify()))
                 return failed();
             
             level = (Level) animation.getSubLevel();
@@ -110,7 +112,7 @@ public abstract class LittleActionInteract<T> extends LittleAction<T> {
         if (blockEntity instanceof BETiles be) {
             LittleTileContext context = be.getFocusedTile(transformedPos, transformedLook);
             
-            if (!isAllowedToInteract(level, player, blockPos, isRightClick(), Facing.EAST)) {
+            if (!isAllowedToInteract(level, player, blockPos, isRightClick(), isModify(), Facing.EAST)) {
                 sendBlockResetToClient(level, player, be);
                 return failed();
             }

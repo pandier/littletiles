@@ -100,7 +100,7 @@ public abstract class LittleActionBoxes extends LittleAction<Boolean> {
             Entry<BlockPos, ArrayList<LittleBox>> entry = iterator.next();
             BlockPos pos = entry.getKey();
             BlockState state = level.getBlockState(pos);
-            if (!isAllowedToInteract(level, player, pos, false, Facing.EAST)) {
+            if (!isAllowedToInteract(level, player, pos, false, true, Facing.EAST)) {
                 if (!level.isClientSide)
                     sendBlockResetToClient(level, player, pos);
                 continue;
