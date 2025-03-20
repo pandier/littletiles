@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import team.creative.creativecore.client.sound.EntitySound;
@@ -309,7 +310,10 @@ public abstract class LittleStateStructure<T extends AnimationState> extends Lit
     
     @OnlyIn(Dist.CLIENT)
     private void playClient(SoundEvent event, float volume, float pitch) {
-        GuiControl.playSound(new EntitySound(event, getAnimationEntity(), volume, pitch, SoundSource.BLOCKS));
+        Entity animationEntity = getAnimationEntity();
+        if (animationEntity != null) {
+            GuiControl.playSound(new EntitySound(event, animationEntity, volume, pitch, SoundSource.BLOCKS));
+        }
     }
     
     @Override
