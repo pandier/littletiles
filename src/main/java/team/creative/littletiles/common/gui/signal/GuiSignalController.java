@@ -14,8 +14,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -120,7 +118,6 @@ public class GuiSignalController extends GuiParent {
     }
     
     @Override
-    @Environment(EnvType.CLIENT)
     @OnlyIn(Dist.CLIENT)
     protected void renderContent(GuiGraphics graphics, GuiChildControl control, Rect contentRect, Rect realContentRect, double scale, int mouseX, int mouseY) {
         if (realContentRect == null)
@@ -150,7 +147,6 @@ public class GuiSignalController extends GuiParent {
     }
     
     @Override
-    @Environment(EnvType.CLIENT)
     @OnlyIn(Dist.CLIENT)
     protected void renderControl(GuiGraphics graphics, GuiChildControl child, GuiControl control, Rect controlRect, Rect realRect, double scale, int mouseX, int mouseY, boolean hover) {
         if (control instanceof GuiSignalNode com) {
@@ -170,7 +166,6 @@ public class GuiSignalController extends GuiParent {
         super.renderControl(graphics, child, control, controlRect, realRect, scale, mouseX, mouseY, hover);
     }
     
-    @Environment(EnvType.CLIENT)
     @OnlyIn(Dist.CLIENT)
     private void renderConnections(Matrix4f matrix, GuiChildControl child, GuiSignalNode node, double scale, boolean hover, double mouseX, double mouseY) {
         RenderSystem.disableCull();
@@ -189,7 +184,6 @@ public class GuiSignalController extends GuiParent {
         }
     }
     
-    @Environment(EnvType.CLIENT)
     @OnlyIn(Dist.CLIENT)
     private void renderConnection(Matrix4f matrix, GuiChildControl from, GuiChildControl to, boolean hover, double originX, double originY) {
         int color = hover ? ColorUtils.WHITE : ColorUtils.BLACK;

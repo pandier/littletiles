@@ -3,8 +3,6 @@ package team.creative.littletiles.common.gui.structure;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
@@ -45,7 +43,6 @@ import team.creative.littletiles.common.structure.type.premade.LittleBlankOMatic
 public class GuiBlankOMatic extends GuiLayer {
     
     @OnlyIn(Dist.CLIENT)
-    @Environment(EnvType.CLIENT)
     private static DisplayColor SELECTED_DISPLAY;
     public LittleBlankOMatic whitener;
     public SimpleContainer whiteInput = new SimpleContainer(1);
@@ -270,7 +267,6 @@ public class GuiBlankOMatic extends GuiLayer {
         }
         
         @Override
-        @Environment(EnvType.CLIENT)
         @OnlyIn(Dist.CLIENT)
         public StyleDisplay getBorder(GuiStyle style, StyleDisplay display) {
             if (selected) {
