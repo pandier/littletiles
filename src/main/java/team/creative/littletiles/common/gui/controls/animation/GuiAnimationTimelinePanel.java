@@ -53,7 +53,7 @@ public class GuiAnimationTimelinePanel extends GuiTimelinePanel {
     protected final List<GuiChildTimelineChannel> childChannels = new ArrayList<>();
     
     public final GuiTreeItemStructure item;
-    public GuiTimelineKey edited;
+    public GuiTimelineKey<?> edited;
     
     public GuiAnimationTimelinePanel(GuiTreeItemStructure item, GuiRecipeAnimationHandler handler, int duration, AnimationTimeline timeline, boolean limited) {
         super(handler, duration);
@@ -160,24 +160,26 @@ public class GuiAnimationTimelinePanel extends GuiTimelinePanel {
             editKey.clear();
             edited = null;
         });
-        
+
         editKey.registerEventChanged(x -> {
-            if (x.control instanceof GuiDistanceControl distance) {
-                edited.value = distance.getVanillaDistance();
-                time.raiseEvent(new GuiControlChangedEvent(time));
-            } else if (x.control instanceof GuiTextfield text) {
-                edited.value = text.parseDouble();
-                time.raiseEvent(new GuiControlChangedEvent(time));
-            }
-            
-            if (edited != null && edited.value instanceof PlaySoundEvent value) {
-                if (x.control.is("sound") && x.control instanceof GuiComboBoxMapped box)
+            if (edited == null) return;
+
+            if (x.control instanceof GuiDistanceControl distance && edited.value instanceof Double) {
+                //noinspection RedundantCast,unchecked
+                ((GuiTimelineKey<Double>) edited).value = distance.getVanillaDistance();
+                time.raiseEvent(new GuiControlChangedEvent<>(time));
+            } else if (x.control instanceof GuiTextfield text && edited.value instanceof Double) {
+                //noinspection RedundantCast,unchecked
+                ((GuiTimelineKey<Double>) edited).value = text.parseDouble();
+                time.raiseEvent(new GuiControlChangedEvent<>(time));
+            } else if (edited.value instanceof PlaySoundEvent value) {
+                if (x.control.is("sound") && x.control instanceof GuiComboBoxMapped<?> box)
                     value.sound = PlaySoundEvent.get((ResourceLocation) box.getSelected());
                 else if (x.control.is("volume") && x.control instanceof GuiSlider slider)
                     value.volume = (float) slider.getValue();
                 else if (x.control.is("pitch") && x.control instanceof GuiSlider slider)
                     value.pitch = (float) slider.getValue();
-                time.raiseEvent(new GuiControlChangedEvent(time));
+                time.raiseEvent(new GuiControlChangedEvent<>(time));
             }
         });
         
