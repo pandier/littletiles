@@ -1,3 +1,10 @@
+1.6.0-pre156.pandier1
+
+- Fixed crash when right-clicking an advanced door that only has sound events
+- Fixed crash when inputting value into a sound event field in a blueprint
+- Fixed crash when using "none" as a child in a blueprint
+- Tried implementing some adventure mode restrictions
+
 1.6.0-pre156
 Fixed lighting not getting updated properly
 
