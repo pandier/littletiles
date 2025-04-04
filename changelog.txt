@@ -1,3 +1,7 @@
+1.6.0-pre156.pandier2
+
+- Fixed crash on startup because of mappings
+
 1.6.0-pre156.pandier1
 
 - Fixed crash when right-clicking an advanced door that only has sound events
