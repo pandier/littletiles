@@ -244,8 +244,7 @@ public class GuiBag extends GuiConfigure {
     public class BagSlot extends Slot {
         
         private ItemStack cache;
-        private boolean full;
-        
+
         public BagSlot(Container container, int index) {
             super(container, index, 0, 0);
         }
@@ -272,11 +271,9 @@ public class GuiBag extends GuiConfigure {
                 BlockIngredientEntry entry = getEntry();
                 if (entry == null || entry.isEmpty()) {
                     cache = ItemStack.EMPTY;
-                    full = false;
                 } else {
                     cache = ItemBlockIngredient.of(entry);
                     cache.setCount(Math.max(1, (int) entry.value));
-                    full = entry.value > 1;
                 }
             }
             return cache;
@@ -284,21 +281,27 @@ public class GuiBag extends GuiConfigure {
         
         @Override
         public ItemStack remove(int count) {
-            ItemStack taken = cache;
             BlockIngredientEntry entry = getEntry();
-            if (entry != null) {
-                if (full) {
-                    taken = entry.getBlockStack();
-                    taken.setCount((int) entry.value);
-                    entry.value -= taken.getCount();
-                } else
-                    entry.value = 0;
-                
-                if (entry.isEmpty())
-                    bag.get(BlockIngredient.class).getContent().remove(getSlotIndex());
+            if (entry == null)
+                return ItemStack.EMPTY;
+
+            ItemStack taken;
+            if (entry.value > 1) {
+                taken = entry.getBlockStack();
+                taken.setCount((int) entry.value);
+                entry.value -= taken.getCount();
+            } else {
+                taken = ItemBlockIngredient.of(entry);
+                taken.setCount(1);
+                entry.value = 0;
             }
-            cache = null;
+
+            if (entry.isEmpty()) {
+                bag.get(BlockIngredient.class).getContent().remove(getSlotIndex());
+            }
+
             saveBagInventory();
+            clearItemCache();
             return taken;
         }
     }
