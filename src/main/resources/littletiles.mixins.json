@@ -52,6 +52,8 @@
         "client.render.LightTextureAccessor",
         "client.render.GameRendererAccessor",
         "client.render.GameRendererMixin",
+        "client.creativecore.GuiSlotBaseMixin",
+        "client.creativecore.GuiRenderHelperMixin",
         "rubidium.BakedChunkModelBuilderAccessor",
         "rubidium.BlockRenderContextAccessor",
         "rubidium.BlockRendererAccessor",
