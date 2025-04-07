@@ -1,3 +1,13 @@
+1.6.0-pre156.pandier4
+
+- Improved color progress bar related stuff in Little Bag UI
+- Fixed crash when inserting a different Little Bag into the input slot of an open Little Bag
+- Fixed some item rendering issues inside Little Bag inventory
+
+1.6.0-pre156.pandier3
+
+- Fixed item duplication with Little Bag
+
 1.6.0-pre156.pandier2
 
 - Fixed crash on startup because of mappings
