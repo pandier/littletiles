@@ -15,7 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import team.creative.creativecore.common.gui.Align;
 import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.controls.inventory.GuiInventoryGrid;
-import team.creative.creativecore.common.gui.controls.inventory.GuiPlayerInventoryGrid;
 import team.creative.creativecore.common.gui.controls.inventory.IGuiInventory;
 import team.creative.creativecore.common.gui.flow.GuiFlow;
 import team.creative.creativecore.common.gui.sync.GuiSyncLocal;
@@ -24,6 +23,7 @@ import team.creative.creativecore.common.util.mc.LevelUtils;
 import team.creative.creativecore.common.util.type.Color;
 import team.creative.littletiles.LittleTiles;
 import team.creative.littletiles.api.common.ingredient.ILittleIngredientInventory;
+import team.creative.littletiles.common.fix.creativecore.GuiPlayerInventoryGridFix;
 import team.creative.littletiles.common.gui.controls.GuiColorProgressBar;
 import team.creative.littletiles.common.ingredient.BlockIngredient;
 import team.creative.littletiles.common.ingredient.BlockIngredientEntry;
@@ -95,8 +95,8 @@ public class GuiBag extends GuiConfigure {
         tool.get().getOrCreateTag();
         
         bag = ((ItemLittleBag) tool.get().getItem()).getInventory(tool.get());
-        ColorIngredient unit = bag.get(ColorIngredient.class);
-        
+        ColorIngredient colors = bag.get(ColorIngredient.class);
+
         GuiParent upper = new GuiParent(GuiFlow.STACK_X);
         add(upper);
         GuiParent left = new GuiParent();
@@ -106,7 +106,7 @@ public class GuiBag extends GuiConfigure {
         upper.add(right.setAlign(Align.STRETCH).setExpandableX());
         
         GuiInventoryGrid inputInventory;
-        right.add(inputInventory = new GuiInventoryGrid("input", input).addListener(x -> {
+        right.add(inputInventory = new GuiInventoryGrid("input", input, 1, 1, InputSlot::new).addListener(x -> {
             Player player = getPlayer();
             ItemStack input = GuiBag.this.input.getItem(0);
             
@@ -177,18 +177,18 @@ public class GuiBag extends GuiConfigure {
             
         }));
         int colorStorage = LittleTiles.CONFIG.general.bag.colorStorage;
-        right.add(new GuiColorProgressBar("black", unit.black, colorStorage, Color.BLACK));
-        right.add(new GuiColorProgressBar("cyan", unit.cyan, colorStorage, Color.CYAN));
-        right.add(new GuiColorProgressBar("magenta", unit.magenta, colorStorage, Color.MAGENTA));
-        right.add(new GuiColorProgressBar("yellow", unit.yellow, colorStorage, Color.YELLOW));
+        right.add(new GuiColorProgressBar("black", colors.black, colorStorage, Color.BLACK));
+        right.add(new GuiColorProgressBar("cyan", colors.cyan, colorStorage, Color.CYAN));
+        right.add(new GuiColorProgressBar("magenta", colors.magenta, colorStorage, Color.MAGENTA));
+        right.add(new GuiColorProgressBar("yellow", colors.yellow, colorStorage, Color.YELLOW));
         
         bag = ((ItemLittleBag) tool.get().getItem()).getInventory(tool.get());
-        
+
         bagInventory = new SimpleContainer(LittleTiles.CONFIG.general.bag.inventorySize);
         left.add(
             bagInventoryGui = new GuiInventoryGrid(name, bagInventory, LittleTiles.CONFIG.general.bag.inventoryWidth, LittleTiles.CONFIG.general.bag.inventoryHeight, (c, i) -> new BagSlot(c, i)));
         
-        add(addInventory(new GuiPlayerInventoryGrid(getPlayer())).disableSlot(tool.index));
+        add(addInventory(new GuiPlayerInventoryGridFix(getPlayer())).disableSlot(tool.index));
         
         addInventory(inputInventory);
         addInventory(bagInventoryGui);
@@ -239,6 +239,18 @@ public class GuiBag extends GuiConfigure {
     @Override
     public Iterable<IGuiInventory> inventoriesToExract() {
         return inventoriesInv;
+    }
+
+    public class InputSlot extends Slot {
+
+        public InputSlot(Container container, int index) {
+            super(container, index, 0, 0);
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            return !(stack.getItem() instanceof ItemLittleBag);
+        }
     }
     
     public class BagSlot extends Slot {
