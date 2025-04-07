@@ -13,10 +13,7 @@ import team.creative.creativecore.common.gui.GuiParent;
 import team.creative.creativecore.common.gui.VAlign;
 import team.creative.creativecore.common.gui.controls.parent.GuiLabeledControl;
 import team.creative.creativecore.common.gui.controls.parent.GuiTabs;
-import team.creative.creativecore.common.gui.controls.simple.GuiCheckBox;
-import team.creative.creativecore.common.gui.controls.simple.GuiLabel;
-import team.creative.creativecore.common.gui.controls.simple.GuiStateButtonMapped;
-import team.creative.creativecore.common.gui.controls.simple.GuiTextfield;
+import team.creative.creativecore.common.gui.controls.simple.*;
 import team.creative.creativecore.common.gui.controls.timeline.GuiTimeline;
 import team.creative.creativecore.common.gui.controls.timeline.GuiTimelineChannelDouble;
 import team.creative.creativecore.common.gui.controls.timeline.GuiTimelineKey;
@@ -128,7 +125,7 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         settings.add(new GuiCheckBox("noClip", noClip).setTranslate("gui.no_clip").setTooltip("gui.door.no_clip.tooltip"));
         settings.add(new GuiCheckBox("playPlaceSounds", playPlaceSounds).setTranslate("gui.door.play_place_sound").setTooltip("gui.door.play_place_sound.tooltip"));
         
-        settings.add(new GuiLabeledControl(Component.translatable("gui.duration").append(":"), new GuiTextfield("duration", "" + duration).setNumbersOnly()));
+        settings.add(new GuiLabeledControl(Component.translatable("gui.duration").append(":"), new GuiSteppedSlider("duration", duration, 1, 500)));
         
         GuiIsoAnimationViewer viewer = upper.get("viewer");
         settings.add(new GuiCheckBox("even", viewer.isEven()).setTranslate("gui.door.axis.even"));
@@ -183,8 +180,8 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         });
         
         settings.registerEventChanged(x -> {
-            if (x.control instanceof GuiTextfield text && text.is("duration")) {
-                int newDuration = text.parseInteger();
+            if (x.control instanceof GuiSteppedSlider slider && slider.is("duration")) {
+                int newDuration = slider.getIntValue();
                 same.durationChanged(newDuration);
                 different.durationChanged(newDuration);
             }
@@ -196,8 +193,8 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
     public void updateTimeline() {
         GuiTimelineConfig config = get("tabs", GuiTabs.class).index() != 0 ? different : same;
         GuiStateButtonMapped<ValueInterpolation> inter = get("inter");
-        GuiTextfield durationT = get("duration");
-        int duration = durationT.parseInteger();
+        GuiSteppedSlider durationS = get("duration");
+        int duration = durationS.getIntValue();
         PhysicalState closed = config.closedState();
         PhysicalState opened = config.openedState();
         boolean opening = config.openingAnimation();
@@ -223,7 +220,7 @@ public class LittleDoorAdvancedGui extends LittleStructureGuiControl {
         door.rightClick = get("rightClick", GuiCheckBox.class).value;
         door.noClip = get("noClip", GuiCheckBox.class).value;
         door.playPlaceSounds = get("playPlaceSounds", GuiCheckBox.class).value;
-        door.duration = get("duration", GuiTextfield.class).parseInteger();
+        door.duration = get("duration", GuiSteppedSlider.class).getIntValue();
         GuiTimelineConfig config = door.differentTransition ? different : same;
         
         door.putState(new AnimationState("closed", config.closedState(), !door.stayAnimated));
