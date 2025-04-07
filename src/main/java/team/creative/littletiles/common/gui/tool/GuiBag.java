@@ -45,7 +45,12 @@ public class GuiBag extends GuiConfigure {
     public SimpleContainer input = new SimpleContainer(1);
     private List<IGuiInventory> inventories = new ArrayList<>();
     private List<IGuiInventory> inventoriesInv = new ArrayList<>();
-    
+
+    private GuiColorProgressBar blackProgressBar;
+    private GuiColorProgressBar cyanProgressBar;
+    private GuiColorProgressBar magentaProgressBar;
+    private GuiColorProgressBar yellowProgressBar;
+
     public final GuiSyncLocal<EndTag> RELOAD = getSyncHolder().register("reload", v -> {
         tool.changed();
         reinit();
@@ -66,6 +71,7 @@ public class GuiBag extends GuiConfigure {
                     LevelUtils.dropItem(player, colorStack);
                 
                 saveBagInventory();
+                updateColorProgressBars();
                 RELOAD.send(EndTag.INSTANCE);
                 tick();
             }
@@ -75,8 +81,9 @@ public class GuiBag extends GuiConfigure {
     public GuiBag(ContainerSlotView view) {
         super("bag", view);
         registerEventClick(x -> {
-            if (x.control instanceof GuiColorProgressBar)
-                DROP_COLOR.send(StringTag.valueOf(x.control.name));
+            if (x.control instanceof GuiColorProgressBar) {
+                DROP_COLOR.sendAndExecute(this, StringTag.valueOf(x.control.name));
+            }
         });
     }
     
@@ -130,6 +137,7 @@ public class GuiBag extends GuiConfigure {
                     }
                     
                     if (containsColor) {
+                        updateColorProgressBars();
                         player.playSound(SoundEvents.BREWING_STAND_BREW, 1.0F, 1.0F);
                         RELOAD.send(EndTag.INSTANCE);
                     }
@@ -163,6 +171,7 @@ public class GuiBag extends GuiConfigure {
                         }
                         
                         if (containsColor) {
+                            updateColorProgressBars();
                             player.playSound(SoundEvents.BREWING_STAND_BREW, 1.0F, 1.0F);
                             RELOAD.send(EndTag.INSTANCE);
                         }
@@ -176,17 +185,18 @@ public class GuiBag extends GuiConfigure {
             }
             
         }));
+
         int colorStorage = LittleTiles.CONFIG.general.bag.colorStorage;
-        right.add(new GuiColorProgressBar("black", colors.black, colorStorage, Color.BLACK));
-        right.add(new GuiColorProgressBar("cyan", colors.cyan, colorStorage, Color.CYAN));
-        right.add(new GuiColorProgressBar("magenta", colors.magenta, colorStorage, Color.MAGENTA));
-        right.add(new GuiColorProgressBar("yellow", colors.yellow, colorStorage, Color.YELLOW));
+        right.add(blackProgressBar = new GuiColorProgressBar("black", colors.black, colorStorage, Color.BLACK));
+        right.add(cyanProgressBar = new GuiColorProgressBar("cyan", colors.cyan, colorStorage, new Color(0xFF00FFFF)));
+        right.add(magentaProgressBar = new GuiColorProgressBar("magenta", colors.magenta, colorStorage, Color.MAGENTA));
+        right.add(yellowProgressBar = new GuiColorProgressBar("yellow", colors.yellow, colorStorage, Color.YELLOW));
         
         bag = ((ItemLittleBag) tool.get().getItem()).getInventory(tool.get());
 
         bagInventory = new SimpleContainer(LittleTiles.CONFIG.general.bag.inventorySize);
         left.add(
-            bagInventoryGui = new GuiInventoryGrid(name, bagInventory, LittleTiles.CONFIG.general.bag.inventoryWidth, LittleTiles.CONFIG.general.bag.inventoryHeight, (c, i) -> new BagSlot(c, i)));
+            bagInventoryGui = new GuiInventoryGrid(name, bagInventory, LittleTiles.CONFIG.general.bag.inventoryWidth, LittleTiles.CONFIG.general.bag.inventoryHeight, BagSlot::new));
         
         add(addInventory(new GuiPlayerInventoryGridFix(getPlayer())).disableSlot(tool.index));
         
@@ -198,7 +208,16 @@ public class GuiBag extends GuiConfigure {
         for (int i = 0; i < bagInventoryGui.inventorySize(); i++)
             ((BagSlot) bagInventoryGui.getSlot(i).slot).resetCache();
     }
-    
+
+    public void updateColorProgressBars() {
+        ColorIngredient colors = bag.get(ColorIngredient.class);
+        if (colors == null) return;
+        if (blackProgressBar != null) blackProgressBar.pos = colors.black;
+        if (cyanProgressBar != null) cyanProgressBar.pos = colors.cyan;
+        if (magentaProgressBar != null) magentaProgressBar.pos = colors.magenta;
+        if (yellowProgressBar != null) yellowProgressBar.pos = colors.yellow;
+    }
+
     @Override
     public boolean isExpandableX() {
         return false;
