@@ -80,19 +80,21 @@ public class ItemLittleBag extends Item implements ILittleIngredientInventory, I
         CompoundTag nbt = stack.getOrCreateTag();
         
         ListTag list = new ListTag();
-        int i = 0;
-        for (BlockIngredientEntry ingredient : ingredients.get(BlockIngredient.class).getContent()) {
-            if (ingredient.block instanceof AirBlock && ingredient.value < LittleGrid.getMax().pixelVolume)
-                continue;
-            if (i >= LittleTiles.CONFIG.general.bag.inventorySize)
-                break;
-            list.add(ingredient.save(new CompoundTag()));
-            i++;
+        if (ingredients.contains(BlockIngredient.class)) {
+            int i = 0;
+            for (BlockIngredientEntry ingredient : ingredients.get(BlockIngredient.class).getContent()) {
+                if (ingredient.block instanceof AirBlock && ingredient.value < LittleGrid.getMax().pixelVolume)
+                    continue;
+                if (i >= LittleTiles.CONFIG.general.bag.inventorySize)
+                    break;
+                list.add(ingredient.save(new CompoundTag()));
+                i++;
+            }
         }
-        
         nbt.put("inv", list);
-        
+
         ColorIngredient color = ingredients.get(ColorIngredient.class);
+        if (color == null) color = new ColorIngredient();
         nbt.putInt("black", color.black);
         nbt.putInt("cyan", color.cyan);
         nbt.putInt("magenta", color.magenta);
