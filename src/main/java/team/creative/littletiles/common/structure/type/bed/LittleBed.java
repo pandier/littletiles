@@ -175,34 +175,6 @@ public class LittleBed extends LittleStructure {
     
     @Override
     public InteractionResult use(Level level, LittleTileContext context, BlockPos pos, Player player, BlockHitResult result, InteractionHand hand) {
-        try {
-            checkConnections();
-            
-            if (!LittleTiles.CONFIG.general.enableBed)
-                return InteractionResult.PASS;
-            
-            if (level.isClientSide)
-                return InteractionResult.CONSUME;
-            
-            if (level instanceof ISubLevel l)
-                level = l.getRealLevel();
-            
-            if (level.dimensionType().bedWorks()) {
-                Vec3d vec = getHighestCenterVec();
-                if (this.sleepingPlayer != null) {
-                    player.sendSystemMessage(Component.translatable("tile.bed.occupied", new Object[0]));
-                    return InteractionResult.SUCCESS;
-                }
-                
-                BedSleepingProblem problem = trySleep(player, vec);
-                
-                if (problem != null)
-                    player.displayClientMessage(problem.getMessage(), true);
-                return InteractionResult.SUCCESS;
-            }
-        } catch (CorruptedConnectionException | NotYetConnectedException e) {}
-        
         return InteractionResult.SUCCESS;
     }
-    
 }

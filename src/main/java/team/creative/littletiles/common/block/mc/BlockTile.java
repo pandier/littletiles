@@ -36,7 +36,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -99,11 +98,9 @@ import team.creative.littletiles.common.item.ItemLittleWrench;
 import team.creative.littletiles.common.item.ItemMultiTiles;
 import team.creative.littletiles.common.level.little.LittleLevel;
 import team.creative.littletiles.common.math.box.LittleBox;
-import team.creative.littletiles.common.structure.LittleStructure;
 import team.creative.littletiles.common.structure.attribute.LittleStructureAttribute;
 import team.creative.littletiles.common.structure.exception.CorruptedConnectionException;
 import team.creative.littletiles.common.structure.exception.NotYetConnectedException;
-import team.creative.littletiles.common.structure.type.bed.ILittleBedPlayerExtension;
 import team.creative.littletiles.server.LittleTilesServer;
 
 public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, SimpleWaterloggedBlock {
@@ -340,40 +337,7 @@ public class BlockTile extends BaseEntityBlock implements LittlePhysicBlock, Sim
     public @org.jetbrains.annotations.Nullable BlockPathTypes getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Mob mob) {
         return BlockPathTypes.BLOCKED;
     }
-    
-    @Override
-    public void setBedOccupied(BlockState state, Level world, BlockPos pos, LivingEntity sleeper, boolean occupied) {}
-    
-    @Override
-    public boolean isBed(BlockState state, BlockGetter level, BlockPos pos, @Nullable Entity entity) {
-        return getBed(level, pos, entity) != null;
-    }
-    
-    public LittleStructure getBed(BlockGetter level, BlockPos pos, @Nullable Entity entity) {
-        if (entity != null && !(entity instanceof Player))
-            return null;
-        BETiles be = loadBE(level, pos);
-        if (be != null)
-            for (LittleStructure structure : be.loadedStructures())
-                if (entity == null || structure == ((ILittleBedPlayerExtension) entity).getBed())
-                    return structure;
-        return null;
-    }
-    
-    @Override
-    public Direction getBedDirection(BlockState state, LevelReader world, BlockPos pos) {
-        return Direction.SOUTH;
-    }
-    
-    @Override
-    public Optional<Vec3> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader level, BlockPos pos, float orientation, @Nullable LivingEntity entity) {
-        LittleStructure bed = getBed(level, pos, entity);
-        if (bed != null && level instanceof Level && level.dimensionType().bedWorks())
-            return BedBlock.findStandUpPosition(type, level, pos, bed.getBedDirection(), orientation);
-        
-        return Optional.empty();
-    }
-    
+
     @Override
     public boolean isLadder(BlockState state, LevelReader level, BlockPos pos, LivingEntity entity) {
         BETiles be = loadBE(level, pos);

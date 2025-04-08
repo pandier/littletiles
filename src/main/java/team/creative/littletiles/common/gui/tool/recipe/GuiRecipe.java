@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -48,6 +49,7 @@ import team.creative.littletiles.common.gui.tool.recipe.test.RecipeTest;
 import team.creative.littletiles.common.gui.tool.recipe.test.RecipeTestError;
 import team.creative.littletiles.common.gui.tool.recipe.test.RecipeTestResults;
 import team.creative.littletiles.common.item.ItemLittleBlueprint;
+import team.creative.littletiles.common.structure.registry.LittleStructureRegistry;
 import team.creative.littletiles.common.structure.registry.gui.LittleStructureGui;
 import team.creative.littletiles.common.structure.registry.gui.LittleStructureGuiControl;
 import team.creative.littletiles.common.structure.registry.gui.LittleStructureGuiRegistry;
@@ -252,8 +254,11 @@ public class GuiRecipe extends GuiConfigure {
         top.add(topCenter.setDim(new GuiSizeRatioRules().widthRatio(0.4F).maxWidth(400)).setExpandableY());
         
         // Actual recipe configuration
-        types = new GuiComboxMappedFlexible<>("type", new TextMapBuilder<LittleStructureGui>().addComponent(LittleStructureGuiRegistry.registered(), x -> x.translatable()), x -> x
-                .translatable());
+        TextMapBuilder<LittleStructureGui> typesBuilder = new TextMapBuilder<>();
+        for (LittleStructureGui gui : LittleStructureGuiRegistry.registered())
+            if (!Objects.equals(gui.id(), "simple.bed"))
+                typesBuilder.addComponent(gui, gui.translatable());
+        types = new GuiComboxMappedFlexible<>("type", typesBuilder, LittleStructureGui::translatable);
         topCenter.add(types);
         config = new GuiParent("config", GuiFlow.STACK_Y).setAlign(Align.STRETCH);
         topCenter.add(config.setExpandableY());
