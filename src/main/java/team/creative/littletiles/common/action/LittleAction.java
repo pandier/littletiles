@@ -62,10 +62,7 @@ import team.creative.littletiles.common.config.LittleTilesConfig.NotAllowedToCon
 import team.creative.littletiles.common.config.LittleTilesConfig.NotAllowedToPlaceColorException;
 import team.creative.littletiles.common.entity.LittleEntity;
 import team.creative.littletiles.common.grid.IGridBased;
-import team.creative.littletiles.common.ingredient.LittleIngredient;
-import team.creative.littletiles.common.ingredient.LittleIngredients;
-import team.creative.littletiles.common.ingredient.LittleInventory;
-import team.creative.littletiles.common.ingredient.NotEnoughIngredientsException;
+import team.creative.littletiles.common.ingredient.*;
 import team.creative.littletiles.common.item.ItemPremadeStructure;
 import team.creative.littletiles.common.math.box.LittleBox;
 import team.creative.littletiles.common.math.box.LittleBoxAbsolute;
@@ -323,7 +320,7 @@ public abstract class LittleAction<T> extends CreativePacket {
         if (needIngredients(player)) {
             try {
                 inventory.startSimulation();
-                inventory.take(ingredients.copy());
+                take(player, inventory, ingredients);
                 return true;
             } finally {
                 inventory.stopSimulation();
@@ -336,7 +333,7 @@ public abstract class LittleAction<T> extends CreativePacket {
         if (needIngredients(player)) {
             try {
                 inventory.startSimulation();
-                inventory.take(ingredients.copy());
+                take(player, inventory, ingredients);
             } finally {
                 inventory.stopSimulation();
             }
@@ -346,8 +343,13 @@ public abstract class LittleAction<T> extends CreativePacket {
     }
     
     public static boolean take(Player player, LittleInventory inventory, LittleIngredients ingredients) throws NotEnoughIngredientsException {
-        if (needIngredients(player))
+        if (needIngredients(player)) {
+            // Disallow placing tiles with colors
+            if (ingredients.contains(ColorIngredient.class))
+                throw new NotEnoughIngredientsException(new LittleIngredients());
+
             inventory.take(ingredients.copy());
+        }
         return true;
     }
     
