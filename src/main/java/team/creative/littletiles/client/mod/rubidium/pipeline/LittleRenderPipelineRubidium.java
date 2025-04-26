@@ -189,10 +189,14 @@ public class LittleRenderPipelineRubidium extends LittleRenderPipeline {
                             } else if (quad.isTinted()) {
                                 if (colorizer == null)
                                     colorizer = colorProvider.getColorProvider(state.getBlock());
-                                
-                                colorizer.getColors(slice, pos, state, (ModelQuadView) quad, colors);
-                            } else
+                                if (colorizer != null) {
+                                    colorizer.getColors(slice, pos, state, (ModelQuadView) quad, colors);
+                                } else {
+                                    Arrays.fill(colors, -1);
+                                }
+                            } else {
                                 Arrays.fill(colors, -1);
+                            }
                             
                             ((BlockRendererAccessor) renderer).callWriteGeometry(context, builder, Vec3.ZERO, material, (BakedQuadView) quad, colors, cachedQuadLightData);
                             TextureAtlasSprite sprite = quad.getSprite();

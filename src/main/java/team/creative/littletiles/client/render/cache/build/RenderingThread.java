@@ -228,10 +228,10 @@ public class RenderingThread extends Thread {
                         try {
                             posestack.setIdentity();
                             get(data.chunk.getPipeline()).buildCache(posestack, buffers, data, format, bakedQuadWrapper);
-                            
+
                             if (!LittleTiles.CONFIG.rendering.useCubeCache)
                                 data.be.render.boxCache.clear();
-                            
+
                             if (!finish(data, buffers, renderState, false))
                                 QUEUE.add(data);
                             
@@ -240,7 +240,7 @@ public class RenderingThread extends Thread {
                             if (LittleTilesProfilerOverlay.isActive())
                                 LittleTilesProfilerOverlay.finishBuildingCache(System.nanoTime() - duration);
                         } catch (Exception e) {
-                            LittleTiles.LOGGER.error(e);
+                            LittleTiles.LOGGER.error("Rendering thread identifier 1", e);
                             if (!finish(data, EMPTY_HOLDERS, -1, false))
                                 QUEUE.add(data);
                         }
@@ -250,7 +250,7 @@ public class RenderingThread extends Thread {
                         QUEUE.add(data);
                     } catch (Exception e) {
                         if (!(e instanceof RenderingException))
-                            LittleTiles.LOGGER.error(e);
+                            LittleTiles.LOGGER.error("Rendering thread identifier 2", e);
                         finish(data, EMPTY_HOLDERS, -1, true);
                     } catch (OutOfMemoryError error) {
                         QUEUE.add(data);
